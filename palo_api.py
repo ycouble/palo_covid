@@ -1,27 +1,69 @@
-from flask import Flask
+import datetime
+
+import pandas as pd
+from flask import Flask, request, jsonify
+from flasgger import Swagger, swag_from
+
 app = Flask(__name__)
+swagger = Swagger(app)
 
 
-_DATASETS = {
-    "jhu": "Johns Hopkins University",
-    "wm": "Worldometers.info",
-    "kor": "Korea Centers for Disease Control & Prevention",
-    "srk": "SRK",
-}
-DATASETS = [{"code": code, "name": name} for code, name in _DATASETS.items()]
+DATASETS = [
+    {"code":     "jhu", "name": "Johns Hopkins University", "integrated": False},
+    {"code": "wm", "name": "Worldometers.info", "integrated": False},
+    {"code":"kor",
+        "name": "Korea Centers for Disease Control & Prevention",
+        "integrated": False,
+    },
+    {"code":"srk", "name": "SRK", "integrated": True},
+]
 
 
-@app.route('/')
+@app.route("/")
 def hello_world():
-    return 'Hello, World!'
+    return jsonify("Hello, World!")
 
 
-@app.route('/covid')
+@app.route("/covid")
 def covid():
-    return 'Covid Overview'
+    """
+    Covid base entry point
+    ---
+    responses:
+        200:
+            description: no useful results returned
+    """
+    return jsonify("Covid Overview")
 
 
-@app.route('/covid/datasets')
+@app.route("/covid/datasets")
 def covid_datasets():
-    return {"datasets": DATASETS}
+    """
+    Covid base entry point
+    ---
+    responses:
+        200:
+            description: The list of datasets
+            schema: 
+                datasets: [{code: name}]
+    """
+    return jsonify({"datasets": DATASETS})
 
+
+@app.route("/covid/<day>/<country>")
+def covid_get_by_date_and_country(day, country):
+    df = pd.read_csv("../data/covid/srk/covid_19_data.csv", parse_dates=["ObservationDate"])  # FIXME: hard coded value
+    aggregated = df.groupby(by=["Country/Region", "ObservationDate"]).agg(
+        {"Confirmed": "sum", "Deaths": "sum", "Recovered": "sum", "SNo": "count"}
+    ).rename(columns={"SNo": "EntryCount"})
+    if (country, day) in aggregated.index:
+        return jsonify(aggregated.loc[country, day].to_dict())
+    else:
+        return jsonify(
+            {
+                "Confirmed": float("nan"),
+                "Deaths": float("nan"),
+                "Recovered": float("nan"),
+                "EntryCount": 0,
+            }
+        )
