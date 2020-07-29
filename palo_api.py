@@ -4,6 +4,8 @@ import pandas as pd
 from flask import Flask, request, jsonify
 from flasgger import Swagger, swag_from
 
+import etl.integration as ei
+
 app = Flask(__name__)
 swagger = Swagger(app)
 
@@ -52,10 +54,7 @@ def covid_datasets():
 
 @app.route("/covid/<day>/<country>")
 def covid_get_by_date_and_country(day, country):
-    df = pd.read_csv("../data/covid/srk/covid_19_data.csv", parse_dates=["ObservationDate"])  # FIXME: hard coded value
-    aggregated = df.groupby(by=["Country/Region", "ObservationDate"]).agg(
-        {"Confirmed": "sum", "Deaths": "sum", "Recovered": "sum", "SNo": "count"}
-    ).rename(columns={"SNo": "EntryCount"})
+    aggregated = ei.get_aggregated() 
     if (country, day) in aggregated.index:
         return jsonify(aggregated.loc[country, day].to_dict())
     else:
