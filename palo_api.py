@@ -53,6 +53,11 @@ def covid_datasets():
     return jsonify({"datasets": DATASETS})
 
 
+@app.route("/covid/countries/<country>")
+def covid_get_latest_for_country(country):
+    return covid_get_by_date_and_country("latest", country)
+
+
 @app.route("/covid/countries/<country>/<day>")
 def covid_get_by_date_and_country(day, country):
     """
@@ -79,8 +84,14 @@ def covid_get_by_date_and_country(day, country):
         ]
     return jsonify(result)
 
+
+@app.route("/covid/world")
+def covid_get_latest_for_world():
+    return covid_get_world_by_date("latest")
+
+
 @app.route("/covid/world/<day>")
-def covid_get_wolrd_by_date(day):
+def covid_get_world_by_date(day):
     """
     Get datapoint for the world for the given date
     Use day = 'latest' to retrieve latest stats for the given country
