@@ -11,9 +11,10 @@ Objective: build a few webservices based on a rest API to provide data from onli
     - used only srk dataset `covid_19_data.csv`
     - some hardcoded values
     - does not use online data, but local csv
-- 29/07/2020 (3h):
+- 29/07/2020 (4h):
   - difficulty: generification for multiple sources, lost a lot of time...
   - split data extraction/uniformization and api responses which are now only data queries
   - enriched /covid/countries/<country> endpoint with a special keyword latest to get latests stats for the country
   - set up automatic tests (basic availability of endpoints for now)
+  - Added Post method on countries endpoint + test
 
