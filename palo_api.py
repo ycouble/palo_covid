@@ -74,7 +74,31 @@ def covid_get_by_date_and_country(day, country):
     else:
         result = [
             res for res in df[(df['Country'] == country) & (df['Date'] == day)]
-            .reset_index(drop=True)
+            .to_dict(orient='index')
+            .values()
+        ]
+    return jsonify(result)
+
+@app.route("/covid/world/<day>")
+def covid_get_wolrd_by_date(day):
+    """
+    Get datapoint for the world for the given date
+    Use day = 'latest' to retrieve latest stats for the given country
+    ---
+    examples:
+        /covid/world/2020-02-21 will return stats for Feb 21st 2020 for World
+        /covid/world/latest will return latest stats for World
+    """
+    df = ei.get_world()
+    if day == "latest":
+        result = [
+            res for res in df[df["Date"] == df["Date"].max()]
+            .to_dict(orient='index')
+            .values()
+        ]
+    else:
+        result = [
+            res for res in df[df['Date'] == day]
             .to_dict(orient='index')
             .values()
         ]
