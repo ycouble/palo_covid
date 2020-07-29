@@ -36,7 +36,7 @@ def covid():
             description: various stats about the data
     """
     df = ei.get_aggregated()
-    return jsonify(df.describe())
+    return jsonify(df.describe().to_dict())
 
 
 @app.route("/covid/datasets")
