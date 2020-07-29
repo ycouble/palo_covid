@@ -12,6 +12,7 @@ def integrate_srk(path):
     df = pd.read_csv(path, parse_dates=["ObservationDate"])
     clean_df = (
         df.rename(columns={"Country/Region": "Country", "ObservationDate": "Date"})
+        .astype({"Confirmed": int, "Deaths": int, "Recovered": int})
         .groupby(by=OUTPUT_INDEX)
         .agg({"Confirmed": "sum", "Deaths": "sum", "Recovered": "sum"})
     )
@@ -25,4 +26,4 @@ def write_data(clean_df, output_path=OUTPUT_PATH, reset=False):
         pd.concat([existing_df, clean_df]).to_csv(output_path)
 
 def get_aggregated(in_path=OUTPUT_PATH):
-    return pd.read_csv(in_path, parse_dates["Date"]).set_index(OUTPUT_INDEX)
+    return pd.read_csv(in_path, parse_dates=["Date"])

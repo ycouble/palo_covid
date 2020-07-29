@@ -29,13 +29,14 @@ def hello_world():
 @app.route("/covid")
 def covid():
     """
-    Covid base entry point
+    Covid data brief
     ---
     responses:
         200:
-            description: no useful results returned
+            description: various stats about the data
     """
-    return jsonify("Covid Overview")
+    df = ei.get_aggregated()
+    return jsonify(df.describe())
 
 
 @app.route("/covid/datasets")
@@ -52,17 +53,30 @@ def covid_datasets():
     return jsonify({"datasets": DATASETS})
 
 
-@app.route("/covid/<day>/<country>")
+@app.route("/covid/datapoints/<country>/<day>")
 def covid_get_by_date_and_country(day, country):
-    aggregated = ei.get_aggregated() 
-    if (country, day) in aggregated.index:
-        return jsonify(aggregated.loc[country, day].to_dict())
+    """
+    Get datapoint by Country and date, or latest for the given country
+    Use day = 'latest' to retrieve latest stats for the given country
+    ---
+    examples:
+        /covid/datapoints/France/2020-02-21 will return stats for Feb 21st 2020 for France
+        /covid/datapoints/France/latest will return latest stats for France
+    """
+    df = ei.get_aggregated()
+    if day == "latest":
+        by_c = df[df["Country"] == country]
+        result = [
+            res for res in by_c[by_c["Date"] == by_c["Date"].max()]
+            .to_dict(orient='index')
+            .values()
+        ]
     else:
-        return jsonify(
-            {
-                "Confirmed": float("nan"),
-                "Deaths": float("nan"),
-                "Recovered": float("nan"),
-                "EntryCount": 0,
-            }
-        )
+        result = [
+            res for res in df[(df['Country'] == country) & (df['Date'] == day)]
+            .reset_index(drop=True)
+            .to_dict(orient='index')
+            .values()
+        ]
+    return jsonify(result)
+
