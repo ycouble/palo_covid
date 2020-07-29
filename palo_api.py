@@ -58,31 +58,42 @@ def covid_get_latest_for_country(country):
     return covid_get_by_date_and_country("latest", country)
 
 
-@app.route("/covid/countries/<country>/<day>")
+@app.route("/covid/countries/<country>/<day>", methods=["GET", "POST"])
+@swag_from("doc/covid_get_by_date_and_country.yml", methods=["GET"])
+@swag_from("doc/covid_post_by_date_and_country.yml", methods=["POST"])
 def covid_get_by_date_and_country(day, country):
-    """
-    Get datapoint by Country and date, or latest for the given country
-    Use day = 'latest' to retrieve latest stats for the given country
-    ---
-    examples:
-        /covid/countries/France/2020-02-21 will return stats for Feb 21st 2020 for France
-        /covid/countries/France/latest will return latest stats for France
-    """
-    df = ei.get_aggregated()
-    if day == "latest":
-        by_c = df[df["Country"] == country]
-        result = [
-            res for res in by_c[by_c["Date"] == by_c["Date"].max()]
-            .to_dict(orient='index')
-            .values()
-        ]
-    else:
-        result = [
-            res for res in df[(df['Country'] == country) & (df['Date'] == day)]
-            .to_dict(orient='index')
-            .values()
-        ]
-    return jsonify(result)
+    """GET/POST on stats for a given country and date. user day = 'latest' to GET 
+    latest stats for a country"""
+    if request.method == "GET":
+        df = ei.get_aggregated()
+        if day == "latest":
+            by_c = df[df["Country"] == country]
+            result = [
+                res for res in by_c[by_c["Date"] == by_c["Date"].max()]
+                .to_dict(orient='index')
+                .values()
+            ]
+        else:
+            result = [
+                res for res in df[(df['Country'] == country) & (df['Date'] == day)]
+                .to_dict(orient='index')
+                .values()
+            ]
+        return jsonify(result)
+    elif request.method == "POST":
+        date = datetime.date.fromisoformat(day)
+        dp = pd.DataFrame(
+            {
+                "Date": [date], 
+                "Country": [country],
+                "Deaths": [request.form['Deaths']],
+                "Confirmed": [request.form['Confirmed']],
+                "Recovered": [request.form['Recovered']],
+                "Source": [request.form.get("Source", "_user")],
+            }
+        ).set_index(ei.DATAPOINTS_INDEX)
+        ei.write_data(dp, ei.DATAPOINTS_PATH)
+        return jsonify(dp.reset_index().to_dict(orient='index'))
 
 
 @app.route("/covid/world")

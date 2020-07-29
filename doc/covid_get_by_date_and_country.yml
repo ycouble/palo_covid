@@ -1,0 +1,20 @@
+Get datapoint for a given Country and date, or get latest datapoint for the given country
+Use day = 'latest' to retrieve latest stats for the given country
+Examples:
+  /covid/countries/France/2020-02-21 will return stats for Feb 21st 2020 for France
+  /covid/countries/France/latest will return latest stats for France
+---
+parameters:
+  - name: country
+    in: path
+    required: true
+    description: country name to add the datapoint for
+    type: string
+  - name: day
+    in: path
+    required: true
+    description: date for the datapoint (YYYY-MM-DD)
+    type: string
+responses:
+  200:
+    description: numbers of confirmed/deaths/recovered cases per country at date

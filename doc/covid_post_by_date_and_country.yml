@@ -1,0 +1,36 @@
+Post datapoint for a given Country and date
+---
+parameters:
+  - name: country
+    in: path
+    required: true
+    description: country name to add the datapoint for
+    type: string
+  - name: day
+    in: path
+    required: true
+    description: date for the datapoint (YYYY-MM-DD)
+    type: string
+  - name: Confirmed
+    in: formData
+    required: true
+    description: Cumulated number of confirmed cases until given day
+    type: integer
+  - name: Deaths
+    in: formData
+    required: true
+    description: Cumulated death number until given day
+    type: integer
+  - name: Recovered
+    in: formData
+    required: true
+    description: Cumulated recovered number until given day
+    type: integer
+  - name: Source
+    in: formData
+    required: false
+    description: provide a source code to filter tag datapoint
+    type: string
+responses:
+  200:
+    description: numbers of confirmed/deaths/recovered cases per country at date
