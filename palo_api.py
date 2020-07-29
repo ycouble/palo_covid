@@ -53,15 +53,15 @@ def covid_datasets():
     return jsonify({"datasets": DATASETS})
 
 
-@app.route("/covid/datapoints/<country>/<day>")
+@app.route("/covid/countries/<country>/<day>")
 def covid_get_by_date_and_country(day, country):
     """
     Get datapoint by Country and date, or latest for the given country
     Use day = 'latest' to retrieve latest stats for the given country
     ---
     examples:
-        /covid/datapoints/France/2020-02-21 will return stats for Feb 21st 2020 for France
-        /covid/datapoints/France/latest will return latest stats for France
+        /covid/countries/France/2020-02-21 will return stats for Feb 21st 2020 for France
+        /covid/countries/France/latest will return latest stats for France
     """
     df = ei.get_aggregated()
     if day == "latest":

@@ -14,5 +14,5 @@ Objective: build a few webservices based on a rest API to provide data from onli
 - 29/07/2020 (2h):
   - difficulty: generification for multiple sources, lost a lot of time...
   - split data extraction/uniformization and api responses which are now only data queries
-  - enriched /covid/datapoints/<country> endpoint with a special keyword latest to get latests stats for the country
+  - enriched /covid/countries/<country> endpoint with a special keyword latest to get latests stats for the country
 
