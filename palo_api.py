@@ -11,13 +11,14 @@ swagger = Swagger(app)
 
 
 DATASETS = [
-    {"code":     "jhu", "name": "Johns Hopkins University", "integrated": False},
+    {"code": "jhu", "name": "Johns Hopkins University", "integrated": False},
     {"code": "wm", "name": "Worldometers.info", "integrated": False},
-    {"code":"kor",
+    {
+        "code": "kor",
         "name": "Korea Centers for Disease Control & Prevention",
         "integrated": False,
     },
-    {"code":"srk", "name": "SRK", "integrated": True},
+    {"code": "srk", "name": "SRK", "integrated": True},
 ]
 
 
@@ -69,14 +70,16 @@ def covid_get_by_date_and_country(day, country):
         if day == "latest":
             by_c = df[df["Country"] == country]
             result = [
-                res for res in by_c[by_c["Date"] == by_c["Date"].max()]
-                .to_dict(orient='index')
+                res
+                for res in by_c[by_c["Date"] == by_c["Date"].max()]
+                .to_dict(orient="index")
                 .values()
             ]
         else:
             result = [
-                res for res in df[(df['Country'] == country) & (df['Date'] == day)]
-                .to_dict(orient='index')
+                res
+                for res in df[(df["Country"] == country) & (df["Date"] == day)]
+                .to_dict(orient="index")
                 .values()
             ]
         return jsonify(result)
@@ -84,16 +87,16 @@ def covid_get_by_date_and_country(day, country):
         date = datetime.date.fromisoformat(day)
         dp = pd.DataFrame(
             {
-                "Date": [date], 
+                "Date": [date],
                 "Country": [country],
-                "Deaths": [request.form['Deaths']],
-                "Confirmed": [request.form['Confirmed']],
-                "Recovered": [request.form['Recovered']],
+                "Deaths": [request.form["Deaths"]],
+                "Confirmed": [request.form["Confirmed"]],
+                "Recovered": [request.form["Recovered"]],
                 "Source": [request.form.get("Source", "_user")],
             }
         ).set_index(ei.DATAPOINTS_INDEX)
         ei.write_data(dp, ei.DATAPOINTS_PATH)
-        return jsonify(dp.reset_index().to_dict(orient='index'))
+        return jsonify(dp.reset_index().to_dict(orient="index"))
 
 
 @app.route("/covid/world")
@@ -114,15 +117,11 @@ def covid_get_world_by_date(day):
     df = ei.get_world()
     if day == "latest":
         result = [
-            res for res in df[df["Date"] == df["Date"].max()]
-            .to_dict(orient='index')
+            res
+            for res in df[df["Date"] == df["Date"].max()]
+            .to_dict(orient="index")
             .values()
         ]
     else:
-        result = [
-            res for res in df[df['Date'] == day]
-            .to_dict(orient='index')
-            .values()
-        ]
+        result = [res for res in df[df["Date"] == day].to_dict(orient="index").values()]
     return jsonify(result)
-

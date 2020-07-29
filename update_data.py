@@ -13,6 +13,7 @@ ch.setLevel(logging.DEBUG)
 
 logger.addHandler(ch)
 
+
 def update_data():
     logger.info("== Perform per source integration")
     logger.info("  Retrieving data from SRK source")
@@ -23,6 +24,7 @@ def update_data():
     logger.info("== Aggregating world totals")
     world_df = ei.aggregate_world()
     ei.write_data(world_df, ei.WORLD_PATH, reset=True)
+
 
 if __name__ == "__main__":
     fire.Fire(update_data)
