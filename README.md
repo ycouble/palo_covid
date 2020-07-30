@@ -20,6 +20,12 @@ A server will be listening on port 5000: http://localhost:5000.
 
 To see available endpoints, see http://localhost:5000/apidocs
 
+## Predict future data
+```
+(.venv) $ ./predict "US UK France"
+```
+Uses implementation describes in https://www.kaggle.com/eswarchandt/covid-19-forecasting-xgboost/comments
+
 # Status
 - 28/07/2020 (4h):
   - flask REST API prototype working on several endpoints
