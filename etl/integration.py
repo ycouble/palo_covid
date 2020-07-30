@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 
 DATAPOINTS_COLS = ["Country", "Date", "Confirmed", "Deaths", "Recovered", "Source"]
@@ -32,6 +33,7 @@ def aggregate_world(in_path=DATAPOINTS_PATH):
 
 
 def write_data(clean_df, output_path, reset=False):
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
     if reset:
         clean_df.to_csv(output_path)
     else:
