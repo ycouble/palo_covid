@@ -9,7 +9,7 @@ Create a virtual environment, pip install all requirements
 
 ## Update data (or reset DB)
 ```
-(.venv) $ ./update_data.py
+(.venv) $ ./update_data.py [path/to/covid_19_data.csv]
 ```
 
 ## Start server in dev mode (only local access)
