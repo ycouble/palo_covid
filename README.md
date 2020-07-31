@@ -46,6 +46,8 @@ Uses implementation describes in https://www.kaggle.com/eswarchandt/covid-19-for
   - difficulty (4h): parametrizing xgboost to try (unsuccessfully) to extrapolate future datapoints. Given implementation seems to be overfitting the training set
   - implemented notebook from kaggle, adapted for a routine job, and for our data
   - writing predictions to DB (csv)
+- 31/07/2020 (10 min):
+  - Parametrizable path
 - Wished to do, but no time:
   - storage of data in a DB
   - deploy online on public IP
