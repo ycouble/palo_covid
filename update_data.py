@@ -14,10 +14,10 @@ ch.setLevel(logging.DEBUG)
 logger.addHandler(ch)
 
 
-def update_data():
+def update_data(srk_path="../data/covid/srk/covid_19_data.csv"):
     logger.info("== Perform per source integration")
     logger.info("  Retrieving data from SRK source")
-    srk_df = ei.integrate_srk("../data/covid/srk/covid_19_data.csv")  # TODO: online
+    srk_df = ei.integrate_srk(srk_path)
     logger.info("  Concatenating with other sources")
     ei.write_data(srk_df, ei.DATAPOINTS_PATH, reset=True)
 
